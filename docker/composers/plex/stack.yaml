@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+ plex:
+   image: plexinc/pms-docker:latest                  # latest 安装最新的版本
+   hostname: PlexServer                              # 自定义主机名称
+   restart: always                                   # 设置重启策略
+   volumes:
+     - "/home/docker/plex/config:/config"          # Plex 配置文件目录
+     - "/home/docker/plex/transcode:/transcode"    # Plex 转码文件目录
+     - "/home/docker/plex/data:/data"              # Plex 数据文件目录
+     - "/home/aria2_dl/plex/video:/video"
+    # - "/home/docker/nc/data/zcxb/files/video:/video/nc"
+   ports:
+     - 32400:32400/tcp                               # Plex 网页访问端口，例如要改为通过 8080 端口访问，就修改为8080:32400
+     - 3005:3005/tcp                                 # Plex Companion
+     - 8324:8324/tcp                                 # controlling Plex for Roku via Plex Companion
+     - 32469:32469/tcp                               # access to the Plex DLNA Server
+     - 32468:1900/udp                                # access to the Plex DLNA Server
+     - 32410:32410/udp                               # current GDM network discovery
+     - 32412:32412/udp                               # current GDM network discovery
+     - 32413:32413/udp                               # current GDM network discovery
+     - 32414:32414/udp                               # current GDM network discovery
+   # devices:                                        # Share hardware devices with FFmpeg (optional)
+     #  - "/dev/dri:/dev/dri"                        # Intel QSV
+     #  - "/dev/nvidia0:/dev/nvidia0"                # Nvidia CUDA
+     #  - "/dev/nvidiactl:/dev/nvidiactl"
+     #  - "/dev/nvidia-modeset:/dev/nvidia-modeset"
+     #  - "/dev/nvidia-nvswitchctl:/dev/nvidia-nvswitchctl"
+     #  - "/dev/nvidia-uvm:/dev/nvidia-uvm"
+     #  - "/dev/nvidia-uvm-tools:/dev/nvidia-uvm-tools"
+     #  - "/dev/video11:/dev/video11"                # Raspberry V4L2
+   environment:
+     TZ: Asia/Shanghai                               # 容器内部时区
+     PLEX_UID: 0                                     # 在容器内创建的用户 ID（不懂勿改）
+     PLEX_GID: 0                                     # 在容器内创建的用户组 ID（不懂勿改）
+     PLEX_CLAIM: ${PLEX_CLAIM}                         # 真实服务器的声明令牌，您可以通过访问 https://www.plex.tv/claim 获取声明令牌以将您的服务器登录到您的 Plex 帐户
+     #ADVERTISE_IP: hostIPAddress:32400/              # 填写外部访问的固定 IP 或域名，没有的话可以删除此行
